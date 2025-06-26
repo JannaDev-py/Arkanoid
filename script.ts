@@ -24,6 +24,13 @@ const Pieces = {
   piecesRowNum: Math.floor(canvas.height / config.pieceHeight / 2)
 }
 
+const Ball = {
+  width: config.wGameboard / 10,
+  height: config.wGameboard / 10,
+  x: config.wGameboard / 10,
+  y: (canvas.height - config.pieceHeight / 2) - player.height * 2
+}
+
 function configUpdate (): void {
   config.wGameboard = canvasContainer.clientWidth
   config.hGameboard = canvasContainer.clientHeight
@@ -42,6 +49,12 @@ function playerUpdate (): void {
   player.y = canvas.height - config.pieceHeight / 2
 }
 
+function BallUpdate (): void {
+  Ball.width = config.wGameboard / 10
+  Ball.height = config.wGameboard / 10
+  Ball.y = (canvas.height - config.pieceHeight / 2) - player.height * 2
+}
+
 window.addEventListener('resize', () => {
   canvas.width = canvasContainer.clientWidth
   canvas.height = canvasContainer.clientHeight
@@ -49,6 +62,7 @@ window.addEventListener('resize', () => {
   configUpdate()
   PiecesUpdate()
   playerUpdate()
+  BallUpdate()
 
   createGameboard()
   renderGame()
@@ -91,6 +105,10 @@ function renderGame (): void {
   })
   ctx.fillStyle = '#3f7'
   ctx.fillRect(player.x, player.y, player.width - padding.left, player.height - padding.top)
+
+  ctx.fillStyle = '#f21'
+  ctx.arc(Ball.x, Ball.y, Ball.width / 2, 0, Math.PI * 2)
+  ctx.fill()
 }
 
 document.addEventListener('keydown', (e) => {
@@ -101,5 +119,6 @@ document.addEventListener('keydown', (e) => {
   }
   renderGame()
 })
+
 createGameboard()
 renderGame()
