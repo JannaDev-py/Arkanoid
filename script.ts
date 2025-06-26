@@ -12,15 +12,34 @@ const config = {
   pieceHeight: ((canvasContainer.clientHeight / 2) / 5)
 }
 
+const player = {
+  width: config.pieceWidth * 2,
+  height: config.pieceHeight / 3,
+  x: 0,
+  y: canvas.height - config.pieceHeight / 2
+}
+
+const Pieces = {
+  piecesColumnNum: Math.floor(canvas.width / config.pieceWidth),
+  piecesRowNum: Math.floor(canvas.height / config.pieceHeight / 2)
+}
+
 function configUpdate (): void {
   config.wGameboard = canvasContainer.clientWidth
   config.hGameboard = canvasContainer.clientHeight
   config.pieceWidth = (canvasContainer.clientWidth / 9)
   config.pieceHeight = ((canvasContainer.clientHeight / 2) / 5)
 }
+
 function PiecesUpdate (): void {
   Pieces.piecesColumnNum = Math.floor(canvas.width / config.pieceWidth)
   Pieces.piecesRowNum = Math.floor(canvas.height / config.pieceHeight / 2)
+}
+
+function playerUpdate (): void {
+  player.width = config.pieceWidth * 2
+  player.height = config.pieceHeight / 3
+  player.y = canvas.height - config.pieceHeight / 2
 }
 
 window.addEventListener('resize', () => {
@@ -29,15 +48,11 @@ window.addEventListener('resize', () => {
 
   configUpdate()
   PiecesUpdate()
+  playerUpdate()
 
   createGameboard()
   renderGame()
 })
-
-const Pieces = {
-  piecesColumnNum: Math.floor(canvas.width / config.pieceWidth),
-  piecesRowNum: Math.floor(canvas.height / config.pieceHeight / 2)
-}
 
 interface Piece {
   x: number
@@ -70,10 +85,21 @@ function renderGame (): void {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   piecesArray.forEach(row => {
     row.forEach(Piece => {
+      ctx.fillStyle = '#222'
       ctx.fillRect(Piece.x, Piece.y, config.pieceWidth - padding.left, config.pieceHeight - padding.top)
     })
   })
+  ctx.fillStyle = '#3f7'
+  ctx.fillRect(player.x, player.y, player.width - padding.left, player.height - padding.top)
 }
 
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' && player.x + 10 + player.width <= config.wGameboard) {
+    player.x += 10
+  } else if (e.key === 'ArrowLeft' && player.x - 10 >= 0) {
+    player.x -= 10
+  }
+  renderGame()
+})
 createGameboard()
 renderGame()
