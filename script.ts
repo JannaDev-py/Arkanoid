@@ -28,7 +28,9 @@ const Ball = {
   width: config.wGameboard / 10,
   height: config.wGameboard / 10,
   x: config.wGameboard / 10,
-  y: (canvas.height - config.pieceHeight / 2) - player.height * 2
+  y: (canvas.height - config.pieceHeight / 2) - player.height * 2,
+  speedX: 10,
+  speedY: 10
 }
 
 function configUpdate (): void {
@@ -106,9 +108,24 @@ function renderGame (): void {
   ctx.fillStyle = '#3f7'
   ctx.fillRect(player.x, player.y, player.width - padding.left, player.height - padding.top)
 
+  ctx.beginPath()
   ctx.fillStyle = '#f21'
   ctx.arc(Ball.x, Ball.y, Ball.width / 2, 0, Math.PI * 2)
   ctx.fill()
+  ctx.closePath()
+}
+
+function moveBall (): void {
+  if (Ball.x >= config.wGameboard - Ball.width / 2) Ball.speedX = Ball.speedX * -1
+  else if (Ball.x <= 0 + Ball.width / 2) Ball.speedX = Ball.speedX * -1
+  else if (Ball.y <= 0 + Ball.height / 2) Ball.speedY = Ball.speedY * -1
+  else if (Ball.y >= config.hGameboard - Ball.height / 2) Ball.speedY = Ball.speedY * -1
+
+  Ball.x += Ball.speedX
+  Ball.y += Ball.speedY
+
+  renderGame()
+  requestAnimationFrame(moveBall)
 }
 
 document.addEventListener('keydown', (e) => {
@@ -122,3 +139,4 @@ document.addEventListener('keydown', (e) => {
 
 createGameboard()
 renderGame()
+moveBall()
