@@ -26,8 +26,8 @@ const Pieces = {
 }
 
 const Ball = {
-  width: config.wGameboard / 10,
-  height: config.wGameboard / 10,
+  width: config.wGameboard / 15,
+  height: config.wGameboard / 15,
   x: config.wGameboard / 10,
   y: (canvas.height - config.pieceHeight / 2) - player.height * 2,
   speedX: 5,
@@ -129,7 +129,7 @@ function moveBall (): void {
     Ball.y = Ball.height / 2
   } else if (Ball.y >= (config.hGameboard - (Ball.height / 2))) {
     player.lives -= 1
-    if (player.lives === 0) window.location.reload()
+    // if (player.lives === 0) window.location.reload()
 
     Ball.speedY = Ball.speedY * -1
     Ball.y = config.hGameboard - (Ball.height / 2)
@@ -140,6 +140,35 @@ function moveBall (): void {
     Ball.y + Ball.width / 2 >= player.y
   ) {
     Ball.speedY = Ball.speedY * -1
+    Ball.speedX = Ball.speedX * -1
+  }
+
+  // now lets add the bloxk interactition
+  for (let i = 0; i < piecesArray.length; i++) {
+    for (let j = piecesArray[i].length - 1; j >= 0; j--) {
+      const block = piecesArray[i][j]
+      const { x, y } = block
+
+      const ballLeft = Ball.x - Ball.width / 2
+      const ballRight = Ball.x + Ball.width / 2
+      const ballTop = Ball.y - Ball.height / 2
+      const ballBottom = Ball.y + Ball.height / 2
+
+      const blockLeft = x
+      const blockRight = x + config.pieceWidth
+      const blockTop = y
+      const blockBottom = y + config.pieceHeight
+
+      const isColliding = !(ballRight < blockLeft || ballLeft > blockRight ||
+                          ballBottom < blockTop || ballTop > blockBottom)
+
+      if (isColliding) {
+        piecesArray[i].splice(j, 1)
+        Ball.speedY *= -1
+        Ball.speedX *= -1
+        break
+      }
+    }
   }
 
   Ball.x += Ball.speedX
