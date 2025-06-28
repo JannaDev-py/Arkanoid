@@ -15,6 +15,7 @@ const config = {
 const player = {
   width: config.pieceWidth * 2,
   height: config.pieceHeight / 3,
+  lives: 3,
   x: 0,
   y: canvas.height - config.pieceHeight / 2
 }
@@ -29,8 +30,8 @@ const Ball = {
   height: config.wGameboard / 10,
   x: config.wGameboard / 10,
   y: (canvas.height - config.pieceHeight / 2) - player.height * 2,
-  speedX: 10,
-  speedY: 10
+  speedX: 5,
+  speedY: 5
 }
 
 function configUpdate (): void {
@@ -54,6 +55,7 @@ function playerUpdate (): void {
 function BallUpdate (): void {
   Ball.width = config.wGameboard / 10
   Ball.height = config.wGameboard / 10
+  Ball.x = config.wGameboard / 10
   Ball.y = (canvas.height - config.pieceHeight / 2) - player.height * 2
 }
 
@@ -116,10 +118,29 @@ function renderGame (): void {
 }
 
 function moveBall (): void {
-  if (Ball.x >= config.wGameboard - Ball.width / 2) Ball.speedX = Ball.speedX * -1
-  else if (Ball.x <= 0 + Ball.width / 2) Ball.speedX = Ball.speedX * -1
-  else if (Ball.y <= 0 + Ball.height / 2) Ball.speedY = Ball.speedY * -1
-  else if (Ball.y >= config.hGameboard - Ball.height / 2) Ball.speedY = Ball.speedY * -1
+  if (Ball.x >= config.wGameboard - (Ball.width / 2)) {
+    Ball.speedX = Ball.speedX * -1
+    Ball.x = config.wGameboard - (Ball.width / 2)
+  } else if (Ball.x <= 0 + (Ball.width / 2)) {
+    Ball.speedX = Ball.speedX * -1
+    Ball.x = Ball.width / 2
+  } else if (Ball.y <= 0 + (Ball.height / 2)) {
+    Ball.speedY = Ball.speedY * -1
+    Ball.y = Ball.height / 2
+  } else if (Ball.y >= (config.hGameboard - (Ball.height / 2))) {
+    player.lives -= 1
+    if (player.lives === 0) window.location.reload()
+
+    Ball.speedY = Ball.speedY * -1
+    Ball.y = config.hGameboard - (Ball.height / 2)
+  }
+
+  if (Ball.x >= player.x &&
+    Ball.x <= player.x + player.width &&
+    Ball.y + Ball.width / 2 >= player.y
+  ) {
+    Ball.speedY = Ball.speedY * -1
+  }
 
   Ball.x += Ball.speedX
   Ball.y += Ball.speedY
